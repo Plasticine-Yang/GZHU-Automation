@@ -1,0 +1,22 @@
+{
+  "ts-node": {
+    "experimentalSpecifierResolution": "node"
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals"]
+  },
+  "exclude": ["node_modules"]
+}

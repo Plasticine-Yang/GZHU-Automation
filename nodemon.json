@@ -1,0 +1,7 @@
+{
+  "execMap": {
+    "ts": "esno"
+  },
+  "watch": ["src"],
+  "ext": "js,ts"
+}
