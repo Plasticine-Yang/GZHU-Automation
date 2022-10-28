@@ -13,11 +13,11 @@ jobs:
     steps:
       # 拉取项目代码
       - name: Checkout repository
-        uses: action/checkout@v3
+        uses: actions/checkout@v3
 
       # 在 runner 中安装 Node.js
       - name: Use Node.js
-        uses: action/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
 
