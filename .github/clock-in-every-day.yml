@@ -1,0 +1,59 @@
+name: click-in-every-day
+
+on:
+  # 每天 9:00 自动打卡 -- 1:00 是 UTC 时间
+  schedule:
+    - cron: '0 1 * * *'
+  # 手动执行
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取项目代码
+      - name: Checkout repository
+      - uses: action/checkout@v3
+
+      # 在 runner 中安装 Node.js
+      - name: Use Node.js
+        uses: action/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      # 缓存依赖
+      - name: Cache Dependencies
+        # 缓存命中结果会存储在 steps.[id].outputs.cache-hit 里，该变量在继后的 step 中可读
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          # 缓存 node_modules 目录 避免每次执行都重新安装依赖
+          path: '**/node_modules'
+          # key 标识缓存是否失效 只要依赖发生变化 pnpm-lock.yaml 的哈希值就会改变 从而缓存失效 需要重新安装依赖
+          key: ${{runner.OS}}-${{hashFiles('**/pnpm-lock.yaml')}}
+
+      # 安装依赖
+      - name: Installing Dependencies
+        # 缓存未命中时才安装依赖
+        if: steps.cache-dependencies.outpus.cache-hit != 'true'
+        run: pnpm i
+
+      # 缓存打包结果
+      - name: Cache Bundle
+        id: cache-bundle
+        uses: actions/cache@v3
+        with:
+          path: 'dist/gzhu-health-clock-in.cjs'
+          key: ${{runner.OS}}-${{hashFiles('dist/gzhu-health-clock-in.cjs')}}
+
+      # 打包
+      - name: Build
+        if: steps.cache-bundle.outputs.cache-hit != 'true'
+        run: pnpm build
+
+      # 运行打包结果
+      - name: Start Clock In
+        env:
+          GZHU_USERNAME: ${{secrets.GZHU_USERNAME}}
+          GZHU_PASSWORD: ${{secrets.GZHU_PASSWORD}}
+        run: node dist/gzhu-health-clock-in.cjs
