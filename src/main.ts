@@ -105,4 +105,11 @@ const healthClockIn = async (username: string, password: string) => {
   await browser.close()
 }
 
-healthClockIn('', '')
+const username = process.env.GZHU_USERNAME ?? ''
+const password = process.env.GZHU_PASSWORD ?? ''
+
+if (username === '' || password === '') {
+  console.log('请填写用户名和密码!')
+} else {
+  healthClockIn(username, password)
+}
