@@ -8,7 +8,7 @@ export default defineConfig({
   input: 'src/main.ts',
   output: {
     file: fileURLToPath(
-      new URL('dist/gzhu-health-clock-in.js', import.meta.url),
+      new URL('dist/gzhu-health-clock-in.cjs', import.meta.url),
     ),
     format: 'cjs',
   },
