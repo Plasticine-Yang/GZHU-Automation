@@ -21,22 +21,15 @@ jobs:
         with:
           node-version: '16.x'
 
-      # 缓存依赖
-      - name: Cache Dependencies
-        # 缓存命中结果会存储在 steps.[id].outputs.cache-hit 里，该变量在继后的 step 中可读
-        id: cache-dependencies
-        uses: actions/cache@v3
+      # 安装 pnpm 包管理工具
+      - name: Use pnpm package manager
+        uses: pnpm/action-setup@v2
         with:
-          # 缓存 node_modules 目录 避免每次执行都重新安装依赖
-          path: '**/node_modules'
-          # key 标识缓存是否失效 只要依赖发生变化 pnpm-lock.yaml 的哈希值就会改变 从而缓存失效 需要重新安装依赖
-          key: ${{runner.OS}}-${{hashFiles('**/pnpm-lock.yaml')}}
+          version: latest
 
       # 安装依赖
       - name: Installing Dependencies
-        # 缓存未命中时才安装依赖
-        if: steps.cache-dependencies.outpus.cache-hit != 'true'
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       # 缓存打包结果
       - name: Cache Bundle
