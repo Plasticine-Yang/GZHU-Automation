@@ -1,9 +1,6 @@
-name: click-in-every-day
+name: health-clock-in
 
 on:
-  # 每天 9:00 自动打卡 -- 1:00 是 UTC 时间
-  schedule:
-    - cron: '0 1 * * *'
   # 手动执行
   workflow_dispatch:
 
