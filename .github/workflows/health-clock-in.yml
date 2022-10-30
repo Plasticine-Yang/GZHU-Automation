@@ -52,7 +52,7 @@ jobs:
       # 打包 @gzhu-automation/health-clock-in
       - name: Build @gzhu-automation/health-clock-in
         if: steps.cache-health-clock-in-bundle.outputs.cache-hit != 'true'
-        run: pnpm -F @gzhu-automation/shared build
+        run: pnpm -F @gzhu-automation/health-clock-in build
 
       # 运行打包结果
       - name: Start Clock In
