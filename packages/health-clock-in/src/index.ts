@@ -1,32 +1,6 @@
-import puppeteer, { Page } from 'puppeteer'
+import { Page, launch } from 'puppeteer'
 
-const clickItem = async (page: Page, selector: string) => {
-  await page.waitForSelector(selector)
-  await page.$eval(selector, el => {
-    ;(el as HTMLElement).click()
-  })
-}
-
-const sleep = (timeout: number) => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout)
-  })
-}
-
-const login = async (page: Page, username: string, password: string) => {
-  // 等待登录表单出现
-  const usernameSelector = '.login-input-row input#un'
-  const passwordSelector = '.login-input-row input#pd'
-  await page.waitForSelector(usernameSelector)
-  await page.waitForSelector(passwordSelector)
-
-  // 输入登录信息
-  await page.type(usernameSelector, username)
-  await page.type(passwordSelector, password)
-
-  // 点击登录按钮
-  await page.click('#index_login_btn')
-}
+import { clickItem, gzhuLogin, sleep } from '@gzhu-automation/shared'
 
 /**
  * @description 开始上报
@@ -83,14 +57,14 @@ const inputAndSubmitForm = async (page: Page) => {
  * @description 广州大学健康打卡
  */
 const healthClockIn = async (username: string, password: string) => {
-  const browser = await puppeteer.launch()
+  const browser = await launch()
   const page = await browser.newPage()
 
   // 访问健康状况申报首页
   await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
   // 登录
-  await login(page, username, password)
+  await gzhuLogin(page, username, password)
 
   // 开始上报
   await startClockIn(page)

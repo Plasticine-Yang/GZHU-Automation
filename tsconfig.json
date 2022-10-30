@@ -13,7 +13,11 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@gzhu-automation/*": ["packages/*/src"]
+    }
   },
+  "include": ["packages/*/src"],
   "exclude": ["node_modules"]
 }

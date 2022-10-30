@@ -1,0 +1,10 @@
+{
+  "name": "@gzhu-automation/shared",
+  "version": "1.0.0",
+  "author": "Plasticine",
+  "description": "internal utils shared across @gzhu-automation packages",
+  "main": "dist/shared.cjs",
+  "scripts": {
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
+  }
+}

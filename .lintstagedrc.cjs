@@ -1,4 +1,4 @@
 module.exports = {
-  '*.{js,ts}':
-    'eslint --fix --ext=.js,.cjs,.mjs,.ts --ignore-path=.gitignore --cache',
+  '*.{js,ts,jsx,tsx}':
+    'eslint --fix --ext=.js,.cjs,.mjs,.ts,.jsx,.tsx --ignore-path=.gitignore --cache',
 }
