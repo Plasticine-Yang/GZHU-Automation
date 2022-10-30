@@ -1,0 +1,62 @@
+name: health-clock-in
+
+on:
+  # 手动执行
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取项目代码
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 在 runner 中安装 Node.js
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      # 安装 pnpm 包管理工具
+      - name: Use pnpm package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      # 安装依赖
+      - name: Installing Dependencies
+        run: pnpm i --frozen-lockfile
+
+      # 缓存 @gzhu-automation/shared 打包结果
+      - name: Cache @gzhu-automation/shared Bundle
+        id: cache-shared-bundle
+        uses: actions/cache@v3
+        with:
+          path: 'packages/shared/dist/shared.cjs'
+          key: ${{runner.OS}}-${{hashFiles('packages/shared/dist/shared.cjs')}}
+
+      # 缓存 @gzhu-automation/health-clock-in 打包结果
+      - name: Cache @gzhu-automation/shared Bundle
+        id: cache-health-clock-in-bundle
+        uses: actions/cache@v3
+        with:
+          path: 'packages/health-clock-in/dist/gzhu-health-clock-in.cjs'
+          key: ${{runner.OS}}-${{hashFiles('packages/health-clock-in/dist/gzhu-health-clock-in.cjs')}}
+
+      # 打包 @gzhu-automation/shared
+      - name: Build @gzhu-automation/shared
+        if: steps.cache-shared-bundle.outputs.cache-hit != 'true'
+        run: pnpm -F @gzhu-automation/shared build
+
+      # 打包 @gzhu-automation/health-clock-in
+      - name: Build @gzhu-automation/health-clock-in
+        if: steps.cache-health-clock-in-bundle.outputs.cache-hit != 'true'
+        run: pnpm -F @gzhu-automation/shared build
+
+      # 运行打包结果
+      - name: Start Clock In
+        env:
+          GZHU_USERNAME: ${{secrets.GZHU_USERNAME}}
+          GZHU_PASSWORD: ${{secrets.GZHU_PASSWORD}}
+        run: node packages/health-clock-in/dist/gzhu-health-clock-in.cjs
