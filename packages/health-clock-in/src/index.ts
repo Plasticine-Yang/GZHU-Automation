@@ -3,23 +3,6 @@ import { Page, launch } from 'puppeteer'
 import { clickItem, gzhuLogin, sleep } from '@gzhu-automation/shared'
 
 /**
- * @description 开始上报
- */
-const startClockIn = async (page: Page) => {
-  // 等待并点击开始上报按钮
-  try {
-    await page.waitForNavigation()
-    const startBtnSelector = '#preview_start_button'
-    await page.waitForSelector(startBtnSelector)
-    await page.$eval(startBtnSelector, el => {
-      ;(el as HTMLElement).click()
-    })
-  } catch (err) {
-    console.error('[ERROR]:', err)
-  }
-}
-
-/**
  * @description 填写并提交表单
  */
 const inputAndSubmitForm = async (page: Page) => {
@@ -60,14 +43,16 @@ const healthClockIn = async (username: string, password: string) => {
   const browser = await launch()
   const page = await browser.newPage()
 
-  // 访问健康状况申报首页
-  await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
-
   // 登录
   await gzhuLogin(page, username, password)
 
+  console.log('登录成功，开始打卡...')
+
+  // 访问健康状况申报首页
+  await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
+
   // 开始上报
-  await startClockIn(page)
+  await clickItem(page, '#preview_start_button')
 
   // 等待表单出现
   await sleep(3000)
@@ -79,8 +64,8 @@ const healthClockIn = async (username: string, password: string) => {
   await browser.close()
 }
 
-const username = process.env.GZHU_USERNAME ?? ''
-const password = process.env.GZHU_PASSWORD ?? ''
+const username = process.env.GZHU_USERNAME ?? '1965500019'
+const password = process.env.GZHU_PASSWORD ?? 'hahaha666+'
 
 if (username === '' || password === '') {
   console.log('请填写用户名和密码!')
