@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer'
+import { HTTPResponse, Page } from 'puppeteer'
 
 /**
  * @description 数字广大统一认证登录
@@ -7,7 +7,40 @@ import { Page } from 'puppeteer'
  * @param password 数字广大密码
  */
 const gzhuLogin = async (page: Page, username: string, password: string) => {
+  let wipResolve: (value: unknown) => void
+  let wipReject: (reason?: any) => void
+
+  const wipPromise = new Promise((resolve, reject) => {
+    wipResolve = resolve
+    wipReject = reject
+  })
+
+  const loginResponseHandler = async (response: HTTPResponse) => {
+    const url = response.url()
+
+    if (url.startsWith('https://newcas.gzhu.edu.cn/cas/login?service')) {
+      const status = response.status()
+
+      if (status === 200) {
+        const text = await response.text()
+        if (text.includes('连续登录失败')) {
+          wipReject(new Error('账号或密码错误'))
+          page.off('response', loginResponseHandler)
+        }
+      }
+
+      if (status === 302) {
+        wipResolve(null)
+        page.off('response', loginResponseHandler)
+      }
+    }
+  }
+
+  page.on('response', loginResponseHandler)
+
   try {
+    await page.goto('https://newcas.gzhu.edu.cn/')
+
     // 等待登录表单出现
     const usernameSelector = '.login-input-row input#un'
     const passwordSelector = '.login-input-row input#pd'
@@ -22,10 +55,13 @@ const gzhuLogin = async (page: Page, username: string, password: string) => {
     await page.click('#index_login_btn')
   } catch (e) {
     console.log('Login Error:', e)
-    return false
+
+    // @ts-ignore
+    wipReject(e)
+    page.off('response', loginResponseHandler)
   }
 
-  return true
+  return wipPromise
 }
 
 export { gzhuLogin }

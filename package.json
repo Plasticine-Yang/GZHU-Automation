@@ -5,7 +5,7 @@
   "scripts": {
     "exec": "esno",
     "dev": "nodemon",
-    "test": "vitest",
+    "test": "vitest -u",
     "commit": "cz",
     "prepare": "husky install"
   },
