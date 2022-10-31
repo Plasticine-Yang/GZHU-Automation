@@ -12,12 +12,13 @@
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "allowJs": true,
+    "jsx": "react-jsx",
     "forceConsistentCasingInFileNames": true,
     "types": ["vitest/globals"],
     "paths": {
       "@gzhu-automation/*": ["packages/*/src"]
     }
   },
-  "include": ["packages/*/src"],
+  "include": ["packages/*/src", "scripts", "rollup.config.ts"],
   "exclude": ["node_modules"]
 }

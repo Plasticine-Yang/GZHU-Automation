@@ -2,9 +2,11 @@
   "private": true,
   "version": "1.0.0",
   "description": "GZHU automation",
+  "type": "module",
   "scripts": {
     "exec": "esno",
     "dev": "nodemon",
+    "build": "esno scripts/build.ts",
     "test": "vitest -u",
     "commit": "cz",
     "prepare": "husky install"
@@ -29,6 +31,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "esno": "^0.16.3",
+    "execa": "^6.1.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "nodemon": "^2.0.20",
