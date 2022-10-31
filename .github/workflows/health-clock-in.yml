@@ -29,14 +29,6 @@ jobs:
       - name: Installing Dependencies
         run: pnpm i --frozen-lockfile
 
-      # 缓存 chromium
-      - name: Cache Chromium
-        id: cache-chromium
-        uses: actions/cache@v3
-        with:
-          path: '.cache/puppeteer'
-          key: ${{runner.OS}}-chromium
-
       # 安装 chromium
       - name: Installing Chromium
         if: steps.cache-chromium.outputs.cache-hit != 'true'
