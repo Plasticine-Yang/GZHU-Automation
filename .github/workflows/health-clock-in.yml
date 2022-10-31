@@ -29,6 +29,19 @@ jobs:
       - name: Installing Dependencies
         run: pnpm i --frozen-lockfile
 
+      # 缓存 chromium
+      - name: Cache Chromium
+        id: cache-chromium
+        uses: actions/cache@v3
+        with:
+          path: '.cache/puppeteer'
+          key: ${{runner.OS}}-chromium
+
+      # 安装 chromium
+      - name: Installing Chromium
+        if: steps.cache-chromium.outputs.cache-hit != 'true'
+        run: node node_modules/puppeteer/install.js
+
       # 缓存 @gzhu-automation/shared 打包结果
       - name: Cache @gzhu-automation/shared Bundle
         id: cache-shared-bundle
