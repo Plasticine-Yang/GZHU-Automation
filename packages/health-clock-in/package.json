@@ -2,10 +2,9 @@
   "name": "@gzhu-automation/health-clock-in",
   "version": "1.0.0",
   "description": "自动健康打卡",
-  "main": "dist/health-clock-in.cjs",
-  "scripts": {
-    "build": "rollup --config rollup.config.ts --configPlugin typescript"
-  },
+  "type": "module",
+  "main": "dist/health-clock-in.cjs.js",
+  "module": "dist/health-clock-in.esm.js",
   "keywords": [
     "GZHU",
     "广州大学",

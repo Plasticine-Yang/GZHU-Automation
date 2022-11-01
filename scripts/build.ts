@@ -19,4 +19,4 @@ async function build(packageName: string): Promise<void> {
   )
 }
 
-build('shared')
+export { build }

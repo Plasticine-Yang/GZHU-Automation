@@ -54,8 +54,6 @@ const gzhuLogin = async (page: Page, username: string, password: string) => {
     // 点击登录按钮
     await page.click('#index_login_btn')
   } catch (e) {
-    console.log('Login Error:', e)
-
     // @ts-ignore
     wipReject(e)
     page.off('response', loginResponseHandler)

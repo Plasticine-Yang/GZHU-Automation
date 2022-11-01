@@ -1,6 +1,10 @@
-import { Page, launch } from 'puppeteer'
+import { launch, Page } from 'puppeteer'
 
-import { clickItem, gzhuLogin, sleep } from '@gzhu-automation/shared'
+import { clickItem, gzhuLogin, sleep, logger } from '@gzhu-automation/shared'
+
+const subject = '健康打卡'
+
+const { GZHU_USERNAME, GZHU_PASSWORD } = process.env
 
 /**
  * @description 填写并提交表单
@@ -30,9 +34,9 @@ const inputAndSubmitForm = async (page: Page) => {
     // 点击确认
     await clickItem(page, '.dialog_button')
 
-    console.log('打卡成功！')
+    logger.log(subject, '打卡成功！')
   } catch (err) {
-    console.error('[ERROR]:', err)
+    logger.error(`${subject}表单提交出错`, err)
   }
 }
 
@@ -43,32 +47,40 @@ const healthClockIn = async (username: string, password: string) => {
   const browser = await launch()
   const page = await browser.newPage()
 
-  // 登录
-  await gzhuLogin(page, username, password)
+  try {
+    // 登录
+    await gzhuLogin(page, username, password)
+  } catch (error) {
+    logger.error(`${subject}登录失败`, error)
+  }
 
-  console.log('登录成功，开始打卡...')
+  try {
+    logger.log(subject, '登录成功，开始打卡...')
 
-  // 访问健康状况申报首页
-  await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
+    // 访问健康状况申报首页
+    await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
-  // 开始上报
-  await clickItem(page, '#preview_start_button')
+    // 开始上报
+    await clickItem(page, '#preview_start_button')
 
-  // 等待表单出现
-  await sleep(3000)
+    // 等待表单出现
+    await sleep(3000)
 
-  // 填写并提交表单
-  await inputAndSubmitForm(page)
+    // 填写并提交表单
+    await inputAndSubmitForm(page)
 
-  // 关闭浏览器
-  await browser.close()
+    // 关闭浏览器
+    await browser.close()
+  } catch (error) {
+    logger.error('健康打卡', error)
+  }
 }
 
-const username = process.env.GZHU_USERNAME ?? ''
-const password = process.env.GZHU_PASSWORD ?? ''
+const username = GZHU_USERNAME ?? ''
+const password = GZHU_PASSWORD ?? ''
 
 if (username === '' || password === '') {
-  console.log('请填写用户名和密码!')
+  logger.error('健康打卡', '环境变量中没有配置数字广大用户名和密码')
 } else {
   healthClockIn(username, password)
 }

@@ -1,4 +1,5 @@
 import { createTransport } from 'nodemailer'
+import { generateTemplate } from '../template'
 
 interface EmailerConfig {
   /** @description 邮箱域名 -- 如 smtp.qq.com */
@@ -25,7 +26,8 @@ export const createEmailer = (config: EmailerConfig) => {
   })
 
   return {
-    async sendEmail(to: string, subject: string, html: string) {
+    async sendEmail(to: string, subject: string, content: string) {
+      const html = generateTemplate(subject, content)
       await transporter.sendMail({
         from: user,
         to,
