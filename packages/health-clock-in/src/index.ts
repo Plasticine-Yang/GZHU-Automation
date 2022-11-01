@@ -57,6 +57,7 @@ const healthClockIn = async (username: string, password: string) => {
     await gzhuLogin(page, username, password)
   } catch (error) {
     logger.error('数字广大登录失败', error)
+    process.exit(1)
   }
 
   try {
@@ -73,11 +74,11 @@ const healthClockIn = async (username: string, password: string) => {
 
     // 填写并提交表单
     await inputAndSubmitForm(page)
-
-    // 关闭浏览器
-    await browser.close()
   } catch (error) {
     logger.error('未知错误', error)
+  } finally {
+    // 关闭浏览器
+    await browser.close()
   }
 }
 
