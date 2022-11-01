@@ -16,6 +16,7 @@ importers:
       cac: ^6.7.14
       commitizen: ^4.2.5
       cz-conventional-changelog: ^3.3.0
+      dotenv: ^16.0.3
       eslint: ^8.23.1
       eslint-config-prettier: ^8.5.0
       eslint-plugin-prettier: ^4.2.1
@@ -45,6 +46,7 @@ importers:
       cac: 6.7.14
       commitizen: 4.2.5
       cz-conventional-changelog: 3.3.0
+      dotenv: 16.0.3
       eslint: 8.23.1
       eslint-config-prettier: 8.5.0_eslint@8.23.1
       eslint-plugin-prettier: 4.2.1_cabrci5exjdaojcvd6xoxgeowu
@@ -1302,6 +1304,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       is-obj: 2.0.0
+    dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
     dev: true
 
   /eastasianwidth/0.2.0:

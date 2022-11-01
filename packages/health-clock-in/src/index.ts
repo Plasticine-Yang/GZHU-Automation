@@ -1,8 +1,13 @@
 import { launch, Page } from 'puppeteer'
 
-import { clickItem, gzhuLogin, sleep, logger } from '@gzhu-automation/shared'
+import {
+  clickItem,
+  gzhuLogin,
+  sleep,
+  createLogger,
+} from '@gzhu-automation/shared'
 
-const subject = '健康打卡'
+const logger = createLogger('健康打卡')
 
 const { GZHU_USERNAME, GZHU_PASSWORD } = process.env
 
@@ -34,9 +39,9 @@ const inputAndSubmitForm = async (page: Page) => {
     // 点击确认
     await clickItem(page, '.dialog_button')
 
-    logger.log(subject, '打卡成功！')
+    logger.log('打卡成功！', '恭喜您健康打卡成功')
   } catch (err) {
-    logger.error(`${subject}表单提交出错`, err)
+    logger.error('打卡表单提交出错', err)
   }
 }
 
@@ -51,11 +56,11 @@ const healthClockIn = async (username: string, password: string) => {
     // 登录
     await gzhuLogin(page, username, password)
   } catch (error) {
-    logger.error(`${subject}登录失败`, error)
+    logger.error('数字广大登录失败', error)
   }
 
   try {
-    logger.log(subject, '登录成功，开始打卡...')
+    console.log('登录成功，开始打卡...')
 
     // 访问健康状况申报首页
     await page.goto('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
@@ -72,7 +77,7 @@ const healthClockIn = async (username: string, password: string) => {
     // 关闭浏览器
     await browser.close()
   } catch (error) {
-    logger.error('健康打卡', error)
+    logger.error('未知错误', error)
   }
 }
 
@@ -80,7 +85,7 @@ const username = GZHU_USERNAME ?? ''
 const password = GZHU_PASSWORD ?? ''
 
 if (username === '' || password === '') {
-  logger.error('健康打卡', '环境变量中没有配置数字广大用户名和密码')
+  logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
 } else {
   healthClockIn(username, password)
 }

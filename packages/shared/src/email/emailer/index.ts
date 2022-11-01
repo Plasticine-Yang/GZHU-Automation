@@ -26,8 +26,13 @@ export const createEmailer = (config: EmailerConfig) => {
   })
 
   return {
-    async sendEmail(to: string, subject: string, content: string) {
-      const html = generateTemplate(subject, content)
+    async sendEmail(
+      to: string,
+      subject: string,
+      title: string,
+      content: string,
+    ) {
+      const html = generateTemplate(title, content)
       await transporter.sendMail({
         from: user,
         to,

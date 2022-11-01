@@ -9,21 +9,26 @@ const emailer =
     createEmailer({ host: EMAIL_HOST, user: EMAIL_USER, pass: EMAIL_PASS })) ||
   null
 
-type Logger = Console['log'] | Console['error']
-const baseLog = (subject: string, content: any, logger: Logger) => {
-  logger(`${subject}: ${content}`)
-  emailer && emailer.sendEmail(EMAIL_USER!, subject, content)
+type LoggerFn = Console['log'] | Console['error']
+const baseLog = (
+  subject: string,
+  title: string,
+  content: string,
+  logger: LoggerFn,
+) => {
+  logger(`${title}: ${content}`)
+  emailer && emailer.sendEmail(EMAIL_USER!, subject, title, content)
 }
 
-const log = (subject: string, content: any) =>
-  baseLog(`[INFO] - ${subject}`, content, console.log)
-
-const error = (subject: string, content: any) =>
-  baseLog(`[ERROR] - ${subject}`, content, console.error)
-
-const logger = {
-  log,
-  error,
+const createLogger = (subject: string) => {
+  return {
+    log(title: string, content: any) {
+      baseLog(subject, `[INFO] - ${title}`, String(content), console.log)
+    },
+    error(title: string, content: any) {
+      baseLog(subject, `[ERROR] - ${title}`, String(content), console.error)
+    },
+  }
 }
 
-export default logger
+export { createLogger }

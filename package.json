@@ -29,6 +29,7 @@
     "cac": "^6.7.14",
     "commitizen": "^4.2.5",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
