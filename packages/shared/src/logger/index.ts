@@ -10,23 +10,28 @@ const emailer =
   null
 
 type LoggerFn = Console['log'] | Console['error']
-const baseLog = (
+const baseLog = async (
   subject: string,
   title: string,
   content: string,
   logger: LoggerFn,
 ) => {
   logger(`${title}: ${content}`)
-  emailer && emailer.sendEmail(EMAIL_USER!, subject, title, content)
+  emailer && (await emailer.sendEmail(EMAIL_USER!, subject, title, content))
 }
 
 const createLogger = (subject: string) => {
   return {
-    log(title: string, content: any) {
-      baseLog(subject, `[INFO] - ${title}`, String(content), console.log)
+    async log(title: string, content: any) {
+      await baseLog(subject, `[INFO] - ${title}`, String(content), console.log)
     },
-    error(title: string, content: any) {
-      baseLog(subject, `[ERROR] - ${title}`, String(content), console.error)
+    async error(title: string, content: any) {
+      await baseLog(
+        subject,
+        `[ERROR] - ${title}`,
+        String(content),
+        console.error,
+      )
     },
   }
 }
