@@ -39,7 +39,9 @@ const gzhuLogin = async (page: Page, username: string, password: string) => {
   page.on('response', loginResponseHandler)
 
   try {
+    console.log('访问登录页')
     await page.goto('https://newcas.gzhu.edu.cn/')
+    console.log('成功进入登录页')
 
     // 等待登录表单出现
     const usernameSelector = '.login-input-row input#un'
