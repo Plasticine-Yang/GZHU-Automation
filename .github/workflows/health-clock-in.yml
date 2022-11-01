@@ -39,7 +39,7 @@ jobs:
         id: cache-shared-bundle
         uses: actions/cache@v3
         with:
-          path: 'packages/shared/dist/shared.cjs'
+          path: 'packages/shared/dist'
           key: ${{runner.OS}}-${{hashFiles('packages/shared/src')}}
 
       # 缓存 @gzhu-automation/health-clock-in 打包结果
@@ -47,7 +47,7 @@ jobs:
         id: cache-health-clock-in-bundle
         uses: actions/cache@v3
         with:
-          path: 'packages/health-clock-in/dist/gzhu-health-clock-in.cjs'
+          path: 'packages/health-clock-in/dist'
           key: ${{runner.OS}}-${{hashFiles('packages/health-clock-in/src')}}
 
       # 打包 @gzhu-automation/shared
