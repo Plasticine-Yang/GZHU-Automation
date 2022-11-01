@@ -53,16 +53,19 @@ jobs:
       # 打包 @gzhu-automation/shared
       - name: Build @gzhu-automation/shared
         if: steps.cache-shared-bundle.outputs.cache-hit != 'true'
-        run: pnpm -F @gzhu-automation/shared build
+        run: pnpm run cli build shared
 
       # 打包 @gzhu-automation/health-clock-in
       - name: Build @gzhu-automation/health-clock-in
         if: steps.cache-health-clock-in-bundle.outputs.cache-hit != 'true'
-        run: pnpm -F @gzhu-automation/health-clock-in build
+        run: pnpm run cli build health-clock-in
 
       # 运行打包结果
       - name: Start Clock In
         env:
           GZHU_USERNAME: ${{secrets.GZHU_USERNAME}}
           GZHU_PASSWORD: ${{secrets.GZHU_PASSWORD}}
-        run: node packages/health-clock-in/dist/gzhu-health-clock-in.cjs
+          EMAIL_HOST: ${{secrets.EMAIL_HOST}}
+          EMAIL_USER: ${{secrets.EMAIL_USER}}
+          EMAIL_PASS: ${{secrets.EMAIL_PASS}}
+        run: pnpm run exec packages/health-clock-in/dist/health-clock-in.esm.js
