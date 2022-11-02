@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/health-clock-in",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "自动健康打卡",
   "type": "module",
   "main": "dist/health-clock-in.esm.js",

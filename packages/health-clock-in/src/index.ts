@@ -49,7 +49,9 @@ const inputAndSubmitForm = async (page: Page) => {
  * @description 广州大学健康打卡
  */
 const healthClockIn = async (username: string, password: string) => {
-  const browser = await launch()
+  const browser = await launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
   const page = await browser.newPage()
 
   try {
