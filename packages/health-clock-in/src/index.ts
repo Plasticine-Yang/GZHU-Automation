@@ -82,11 +82,15 @@ const healthClockIn = async (username: string, password: string) => {
   }
 }
 
-const username = GZHU_USERNAME ?? ''
-const password = GZHU_PASSWORD ?? ''
+const run = () => {
+  const username = GZHU_USERNAME ?? ''
+  const password = GZHU_PASSWORD ?? ''
 
-if (username === '' || password === '') {
-  logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
-} else {
-  healthClockIn(username, password)
+  if (username === '' || password === '') {
+    logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
+  } else {
+    healthClockIn(username, password)
+  }
 }
+
+export { run }
