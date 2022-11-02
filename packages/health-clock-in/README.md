@@ -26,11 +26,10 @@
 
 本项目已发布到`npm`上，可以在你的服务器中安装`@gzhu-automation/health-clock-in`这个包来运行，配置好环境变量后直接导入该包中的`run`函数执行即可，配合服务器上设置定时任务即可实现每日自动打卡
 
-> PS: 请使用`esno`执行包含了`run`函数的`js`脚本，不要使用`node`
+可以安装`dotenv`，然后在`.env`文件中声明好环境变量后通过如下方式运行
 
 ```shell
-pnpm i esno -D
-npx esno example/run.js
+node -r dotenv/config example/run.js
 ```
 
 # Environment Variables

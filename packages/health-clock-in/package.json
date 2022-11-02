@@ -1,9 +1,9 @@
 {
   "name": "@gzhu-automation/health-clock-in",
-  "version": "1.0.1",
+  "version": "1.0.7",
   "description": "自动健康打卡",
   "type": "module",
-  "main": "dist/health-clock-in.cjs.js",
+  "main": "dist/health-clock-in.esm.js",
   "module": "dist/health-clock-in.esm.js",
   "files": [
     "dist",
@@ -25,6 +25,7 @@
   "author": "Plasticine",
   "license": "MIT",
   "dependencies": {
-    "@gzhu-automation/shared": "workspace:^1.0.0"
+    "@gzhu-automation/shared": "1.0.5",
+    "puppeteer": "^19.2.0"
   }
 }

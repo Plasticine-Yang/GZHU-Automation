@@ -1,10 +1,10 @@
 {
   "name": "@gzhu-automation/shared",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "author": "Plasticine",
   "description": "internal utils shared across @gzhu-automation packages",
   "type": "module",
-  "main": "dist/shared.cjs.js",
+  "main": "dist/shared.esm.js",
   "module": "dist/shared.esm.js",
   "files": [
     "dist",
