@@ -1,18 +1,29 @@
 {
   "name": "@gzhu-automation/health-clock-in",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "自动健康打卡",
   "type": "module",
   "main": "dist/health-clock-in.cjs.js",
   "module": "dist/health-clock-in.esm.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "url": "https://github.com/Plasticine-Yang/GZHU-Automation/tree/main/packages/shared"
+  },
   "keywords": [
+    "gzhu",
     "GZHU",
     "广州大学",
     "健康打卡",
     "广州大学健康打卡"
   ],
   "author": "Plasticine",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@gzhu-automation/shared": "workspace:^1.0.0"
   }

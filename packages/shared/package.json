@@ -1,11 +1,22 @@
 {
   "name": "@gzhu-automation/shared",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "author": "Plasticine",
   "description": "internal utils shared across @gzhu-automation packages",
   "type": "module",
   "main": "dist/shared.cjs.js",
   "module": "dist/shared.esm.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "url": "https://github.com/Plasticine-Yang/GZHU-Automation/tree/main/packages/shared"
+  },
+  "license": "MIT",
   "dependencies": {
     "nodemailer": "^6.8.0",
     "react": "^18.2.0",
