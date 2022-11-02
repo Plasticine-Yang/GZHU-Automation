@@ -26,6 +26,13 @@
 
 本项目已发布到`npm`上，可以在你的服务器中安装`@gzhu-automation/health-clock-in`这个包来运行，配置好环境变量后直接导入该包中的`run`函数执行即可，配合服务器上设置定时任务即可实现每日自动打卡
 
+> PS: 请使用`esno`执行包含了`run`函数的`js`脚本，不要使用`node`
+
+```shell
+pnpm i esno -D
+npx esno example/run.js
+```
+
 # Environment Variables
 
 通过环境变量的方式配置项目的运行，前面说到的`github actions`中的`secrets`其实最终也会作为环境变量注入到项目中
