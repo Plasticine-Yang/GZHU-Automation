@@ -68,4 +68,4 @@ jobs:
           EMAIL_HOST: ${{secrets.EMAIL_HOST}}
           EMAIL_USER: ${{secrets.EMAIL_USER}}
           EMAIL_PASS: ${{secrets.EMAIL_PASS}}
-        run: pnpm run exec packages/health-clock-in/dist/health-clock-in.esm.js
+        run: pnpm run exec packages/health-clock-in/example/run.js
