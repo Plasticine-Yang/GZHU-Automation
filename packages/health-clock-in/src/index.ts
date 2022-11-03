@@ -53,6 +53,8 @@ const healthClockIn = async (username: string, password: string) => {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
   const page = await browser.newPage()
+  page.setDefaultTimeout(0)
+  page.setDefaultNavigationTimeout(0)
 
   try {
     // 登录
