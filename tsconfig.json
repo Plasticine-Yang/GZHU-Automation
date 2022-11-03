@@ -14,8 +14,6 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationDir": ".",
     "types": ["vitest/globals"],
     "paths": {
       "@gzhu-automation/*": ["packages/*/src"]

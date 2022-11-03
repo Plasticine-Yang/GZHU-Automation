@@ -60,7 +60,7 @@ importers:
 
   packages/health-clock-in:
     specifiers:
-      '@gzhu-automation/shared': 1.0.4
+      '@gzhu-automation/shared': 1.0.5
       puppeteer: ^19.2.0
     dependencies:
       '@gzhu-automation/shared': link:../shared
@@ -72,11 +72,13 @@ importers:
       '@types/react': ^18.0.24
       '@types/react-dom': ^18.0.8
       nodemailer: ^6.8.0
+      puppeteer: ^19.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
       react-is: ^18.2.0
     dependencies:
       nodemailer: 6.8.0
+      puppeteer: 19.2.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-is: 18.2.0
