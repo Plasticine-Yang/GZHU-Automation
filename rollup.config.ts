@@ -65,18 +65,7 @@ export default () => {
    */
   function createConfig(format: PackageFormat) {
     const input = resolveWithPackage('src/index.ts')
-
-    // resove external
-    const external = Object.keys(pkg.dependencies)
-    switch (PACKAGE_NAME) {
-      case 'health-clock-in':
-        external.push(...['puppeteer'])
-        break
-
-      case 'shared':
-        external.push(...['react/jsx-runtime', 'react-dom/server'])
-        break
-    }
+    const external = resolveExternal()
 
     return defineConfig({
       input,
@@ -96,6 +85,23 @@ export default () => {
       ],
       external,
     })
+  }
+
+  /**
+   * @description 配置每个包的 external
+   */
+  function resolveExternal() {
+    const external = Object.keys(pkg.dependencies)
+    switch (PACKAGE_NAME) {
+      case 'health-clock-in':
+        break
+
+      case 'shared':
+        external.push(...['react/jsx-runtime', 'react-dom/server'])
+        break
+    }
+
+    return external
   }
 
   const packageConfigs = packageFormats.map(format => createConfig(format))
