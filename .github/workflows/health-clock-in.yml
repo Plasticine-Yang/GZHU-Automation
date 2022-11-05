@@ -29,6 +29,10 @@ jobs:
       - name: Installing Dependencies
         run: pnpm i --frozen-lockfile
 
+      # 安装 Chromium
+      - name: Installing Chromium
+        run: node packages/health-clock-in/node_modules/puppeteer/install.js
+
       # 缓存 @gzhu-automation/shared 打包结果
       - name: Cache @gzhu-automation/shared Bundle
         id: cache-shared-bundle
