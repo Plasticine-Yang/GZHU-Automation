@@ -55,6 +55,9 @@ const healthClockIn = async (username: string, password: string) => {
   const page = await browser.newPage()
   page.setDefaultTimeout(0)
   page.setDefaultNavigationTimeout(0)
+  page.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+  )
 
   try {
     // 登录
