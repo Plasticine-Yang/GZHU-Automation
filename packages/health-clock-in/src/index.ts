@@ -50,7 +50,12 @@ const inputAndSubmitForm = async (page: Page) => {
  */
 const healthClockIn = async (username: string, password: string) => {
   const browser = await launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--proxy-server="direct://"',
+      '--proxy-bypass-list=*',
+    ],
   })
   const page = await browser.newPage()
   page.setDefaultTimeout(0)
