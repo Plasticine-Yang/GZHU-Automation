@@ -60,7 +60,7 @@ importers:
 
   packages/health-clock-in:
     specifiers:
-      '@gzhu-automation/shared': 1.0.5
+      '@gzhu-automation/shared': workspace:^1.0.5
       puppeteer: ^19.2.0
     dependencies:
       '@gzhu-automation/shared': link:../shared
