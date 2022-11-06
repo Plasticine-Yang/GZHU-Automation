@@ -4,7 +4,7 @@
   "description": "GZHU automation",
   "type": "module",
   "scripts": {
-    "exec": "esno",
+    "start": "esno -r dotenv/config",
     "dev": "nodemon",
     "cli": "esno scripts/cli.ts",
     "test": "vitest -u",
