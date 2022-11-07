@@ -47,21 +47,14 @@ const rules = (
 
 // useEnv 开启后会从系统的环境变量中读取配置
 // 如果环境变量中没有相应配置项则会在 run 函数的第一个参数对象中继续配置
-run({ useEnv: true, rules })
+// waitUntil -- 等到 6:30:00 的时候才并发提交预约请求
+run({ useEnv: true, rules, waitUntil: '6:30:00' })
 ```
 
-# 环境变量配置
+配置的方式有两种:
 
-## 登录数字广大
-
-- `GZHU_USERNAME`: 数字广大用户名
-- `GZHU_PASSWORD`: 数字广大密码
-
-## 邮箱日志服务 -- 如果有需要可以进行配置 配置后会在成功和失败的时候通过邮件的方式通知
-
-- `EMAIL_HOST`: 邮件服务器域名
-- `EMAIL_USER`: 邮箱用户名
-- `EMAIL_PASS`: 邮箱授权码
+1. 直接在`run`函数的第一个参数中指定配置
+2. 通过环境变量进行配置
 
 # 预约规则配置
 
@@ -94,3 +87,21 @@ interface ReserveRule {
   multiRules?: Partial<Omit<ReserveRule, 'weekday' | 'multiRules'>>[]
 }
 ```
+
+# 环境变量配置
+
+## 登录数字广大
+
+- `GZHU_USERNAME`: 数字广大用户名
+- `GZHU_PASSWORD`: 数字广大密码
+
+## 邮箱日志服务 -- 如果有需要可以进行配置 配置后会在成功和失败的时候通过邮件的方式通知
+
+- `EMAIL_HOST`: 邮件服务器域名
+- `EMAIL_USER`: 邮箱用户名
+- `EMAIL_PASS`: 邮箱授权码
+
+## 预约规则配置
+
+- `RESERVE_RULES`: 预约规则 json 字符串，可先在 js 文件中编写好配置后再将`JSON.stringify()`调用后的结果作为该环境变量的值
+- `RESERVE_START_TIME`: 直到指定时间才提交预约请求，将该时间设置为预约系统的最早允许预约时间`6:30`可提高预约成功率
