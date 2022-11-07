@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/shared",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Plasticine",
   "description": "internal utils shared across @gzhu-automation packages",
   "type": "module",
