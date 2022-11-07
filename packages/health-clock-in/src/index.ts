@@ -8,7 +8,7 @@ import {
   sleep,
 } from '@gzhu-automation/shared'
 
-const logger = createLogger('健康打卡')
+const logger = createLogger('广州大学健康打卡')
 
 const { GZHU_USERNAME, GZHU_PASSWORD, NODE_ENV } = process.env
 
