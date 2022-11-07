@@ -1,6 +1,11 @@
-import { launch, Page, Protocol } from 'puppeteer'
+import { Page, Protocol } from 'puppeteer'
 
-import { createLogger, gzhuLogin } from '@gzhu-automation/shared'
+import {
+  createLogger,
+  createPuppeteer,
+  gzhuLogin,
+} from '@gzhu-automation/shared'
+
 import { createApi } from './api'
 
 const logger = createLogger('广州大学图书馆预约')
@@ -31,20 +36,7 @@ async function run() {
  * @description 图书馆预约
  */
 async function reserveLibrary({ username, password, rules }: ReserveConfig) {
-  const browser = await launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--proxy-server="direct://"',
-      '--proxy-bypass-list=*',
-    ],
-  })
-  const page = await browser.newPage()
-  page.setDefaultTimeout(0)
-  page.setDefaultNavigationTimeout(0)
-  page.setUserAgent(
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
-  )
+  const { browser, page } = await createPuppeteer()
 
   // 登录数字广大
   try {

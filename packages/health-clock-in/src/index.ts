@@ -1,20 +1,32 @@
-import { launch, Page } from 'puppeteer'
+import { Page } from 'puppeteer'
 
 import {
   clickItem,
+  createLogger,
+  createPuppeteer,
   gzhuLogin,
   sleep,
-  createLogger,
 } from '@gzhu-automation/shared'
 
 const logger = createLogger('健康打卡')
 
-const { GZHU_USERNAME, GZHU_PASSWORD } = process.env
+const { GZHU_USERNAME, GZHU_PASSWORD, NODE_ENV } = process.env
+
+function run() {
+  const username = GZHU_USERNAME ?? ''
+  const password = GZHU_PASSWORD ?? ''
+
+  if (username === '' || password === '') {
+    logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
+  } else {
+    healthClockIn(username, password)
+  }
+}
 
 /**
  * @description 填写并提交表单
  */
-const inputAndSubmitForm = async (page: Page) => {
+async function inputAndSubmitForm(page: Page) {
   try {
     await Promise.all([
       // 当日是否外出
@@ -48,21 +60,8 @@ const inputAndSubmitForm = async (page: Page) => {
 /**
  * @description 广州大学健康打卡
  */
-const healthClockIn = async (username: string, password: string) => {
-  const browser = await launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--proxy-server="direct://"',
-      '--proxy-bypass-list=*',
-    ],
-  })
-  const page = await browser.newPage()
-  page.setDefaultTimeout(0)
-  page.setDefaultNavigationTimeout(0)
-  page.setUserAgent(
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
-  )
+async function healthClockIn(username: string, password: string) {
+  const { browser, page } = await createPuppeteer()
 
   try {
     // 登录
@@ -94,15 +93,6 @@ const healthClockIn = async (username: string, password: string) => {
   }
 }
 
-const run = () => {
-  const username = GZHU_USERNAME ?? ''
-  const password = GZHU_PASSWORD ?? ''
-
-  if (username === '' || password === '') {
-    logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
-  } else {
-    healthClockIn(username, password)
-  }
-}
+NODE_ENV === 'development' && run()
 
 export { run }

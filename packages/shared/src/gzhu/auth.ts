@@ -6,7 +6,7 @@ import { HTTPResponse, Page } from 'puppeteer'
  * @param username 数字广大用户名
  * @param password 数字广大密码
  */
-const gzhuLogin = async (page: Page, username: string, password: string) => {
+async function gzhuLogin(page: Page, username: string, password: string) {
   let wipResolve: (value: unknown) => void
   let wipReject: (reason?: any) => void
 
