@@ -19,7 +19,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
-    "url": "https://github.com/Plasticine-Yang/GZHU-Automation/tree/main/packages/shared"
+    "url": "https://github.com/Plasticine-Yang/GZHU-Automation/tree/main/packages/health-clock-in"
   },
   "keywords": [
     "gzhu",
