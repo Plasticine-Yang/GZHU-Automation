@@ -63,10 +63,10 @@ interface ReserveRule {
   /** @description 预约的房间名 */
   roomName: RoomName
 
-  /** @description 开始时间 -- 格式: 15:20:00 */
+  /** @description 开始时间 -- 格式: 15:20 */
   beginTime: string
 
-  /** @description 结束时间 -- 格式: 15:20:00 */
+  /** @description 结束时间 -- 格式: 15:20 */
   endTime: string
 
   /** @description 预约主题 -- 默认值为 `学习` */
