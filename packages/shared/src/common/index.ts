@@ -26,4 +26,31 @@ const promiseWithTimeout = <T>(
   return Promise.race([promise, timeoutPromise])
 }
 
-export { sleep, promiseWithTimeout }
+/**
+ * @description 一直阻塞直到指定时间才继续
+ */
+const waitUntilTime = (
+  hours: number,
+  minutes: number,
+  seconds: number,
+): Promise<void> => {
+  return new Promise(resolve => {
+    let nowHours: number
+    let nowMinutes: number
+    let nowSeconds: number
+
+    do {
+      const now = new Date()
+      nowHours = now.getHours()
+      nowMinutes = now.getMinutes()
+      nowSeconds = now.getSeconds()
+    } while (
+      nowHours <= hours &&
+      (nowMinutes < minutes || nowSeconds < seconds)
+    )
+
+    resolve()
+  })
+}
+
+export { sleep, promiseWithTimeout, waitUntilTime }
