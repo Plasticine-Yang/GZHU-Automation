@@ -1,3 +1,4 @@
+import { waitUntilTime } from '@gzhu-automation/shared'
 import dayjs, { Dayjs } from 'dayjs'
 import type { Protocol } from 'puppeteer'
 
@@ -13,7 +14,12 @@ import { weekdayDelta } from './utils'
 function createApi(icCookie: Protocol.Network.Cookie) {
   const request = createRequestInstance(icCookie)
 
-  async function reserve(rules: ReserveRule[]) {
+  /**
+   * @description 预约
+   * @param rules 预约规则
+   * @param waitUntil 等到指定时间开始提交预约请求 -- 格式 21:36:03
+   */
+  async function reserve(rules: ReserveRule[], waitUntil?: string) {
     // 获取预约人信息
     const userInfo = await loadUserInfo()
 
@@ -29,7 +35,14 @@ function createApi(icCookie: Protocol.Network.Cookie) {
       validRules,
     )
 
+    // 等到指定时间才发起请求
+    if (waitUntil) {
+      console.log(`等到 ${waitUntil} 才发送请求...`)
+      await waitUntilTime(waitUntil)
+    }
+
     // 批量发起请求
+    console.log('开始发送请求...')
     return batchSendRequest(requestInfoList)
   }
 

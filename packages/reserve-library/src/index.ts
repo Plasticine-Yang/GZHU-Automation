@@ -16,18 +16,22 @@ interface RunConfig {
   gzhuPassword?: string
   /** @description 是否从环境变量中读取配置 */
   useEnv?: boolean
+  waitUntil?: string
 }
 async function run({
   gzhuUsername = '',
   gzhuPassword = '',
   useEnv = false,
   rules = [],
+  waitUntil,
 }: RunConfig = {}) {
   if (useEnv) {
-    const { GZHU_USERNAME, GZHU_PASSWORD, RESERVE_RULES } = process.env
+    const { GZHU_USERNAME, GZHU_PASSWORD, RESERVE_RULES, RESERVE_START_TIME } =
+      process.env
     gzhuUsername = GZHU_USERNAME ?? gzhuUsername
     gzhuPassword = GZHU_PASSWORD ?? gzhuPassword
     rules = RESERVE_RULES ? JSON.parse(RESERVE_RULES) : rules
+    waitUntil = RESERVE_START_TIME ?? waitUntil
   }
 
   if (gzhuUsername === '' || gzhuPassword === '') {
@@ -40,6 +44,7 @@ async function run({
       gzhuUsername,
       gzhuPassword,
       rules,
+      waitUntil,
     })
   }
 }
@@ -51,6 +56,7 @@ async function reserveLibrary({
   gzhuUsername,
   gzhuPassword,
   rules,
+  waitUntil,
 }: ReserveConfig) {
   if (rules.length === 0) {
     logger.error(
@@ -80,7 +86,7 @@ async function reserveLibrary({
     console.log(`成功获取 ic-cookie: ${icCookie.value}`)
 
     const api = createApi(icCookie)
-    const res = await api.reserve(rules)
+    const res = await api.reserve(rules, waitUntil)
 
     res.forEach(item => {
       switch (item.status) {
@@ -164,7 +170,7 @@ if (process.env.NODE_ENV === 'development') {
     ],
   }))
 
-  run({ useEnv: true, rules: rules as ReserveRule[] })
+  run({ useEnv: true, rules: rules as ReserveRule[], waitUntil: '6:30:00' })
 }
 
 export { run }

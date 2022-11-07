@@ -2,6 +2,7 @@ interface ReserveConfig {
   gzhuUsername: string
   gzhuPassword: string
   rules: ReserveRule[]
+  waitUntil?: string
 }
 
 type Weekday =
