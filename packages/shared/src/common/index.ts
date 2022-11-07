@@ -28,28 +28,32 @@ const promiseWithTimeout = <T>(
 
 /**
  * @description 一直阻塞直到指定时间才继续
+ * @param time 指定时间 -- 格式: 21:36:03 否则会直接放行
  */
-const waitUntilTime = (
-  hours: number,
-  minutes: number,
-  seconds: number,
-): Promise<void> => {
+const waitUntilTime = (time: string): Promise<void> => {
   return new Promise(resolve => {
-    let nowHours: number
-    let nowMinutes: number
-    let nowSeconds: number
+    try {
+      const [hours, minutes, seconds] = time.split(':').map(Number)
 
-    do {
-      const now = new Date()
-      nowHours = now.getHours()
-      nowMinutes = now.getMinutes()
-      nowSeconds = now.getSeconds()
-    } while (
-      nowHours <= hours &&
-      (nowMinutes < minutes || nowSeconds < seconds)
-    )
+      let nowHours: number
+      let nowMinutes: number
+      let nowSeconds: number
 
-    resolve()
+      do {
+        const now = new Date()
+        nowHours = now.getHours()
+        nowMinutes = now.getMinutes()
+        nowSeconds = now.getSeconds()
+      } while (
+        nowHours <= hours &&
+        (nowMinutes < minutes || nowSeconds < seconds)
+      )
+
+      resolve()
+    } catch (error) {
+      // 时间格式错误 直接放行
+      resolve()
+    }
   })
 }
 
