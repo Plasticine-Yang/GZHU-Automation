@@ -7,8 +7,8 @@
   "module": "dist/reserve-library.esm.js",
   "exports": {
     ".": {
-      "import": "./dist/reserve-library.cjs.js",
-      "require": "./dist/reserve-library.esm.js"
+      "import": "./dist/reserve-library.esm.js",
+      "require": "./dist/reserve-library.cjs.js"
     }
   },
   "files": [
