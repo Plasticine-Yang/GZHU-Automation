@@ -21,53 +21,96 @@ function createApi(icCookie: Protocol.Network.Cookie) {
     const isWeekdayValid = (weekday: Weekday) => weekdayDelta(weekday) <= 3
 
     // 只对有效的 rule 发起请求
-    const _rules = rules.filter(rule => isWeekdayValid(rule.weekday))
+    const validRules = rules.filter(rule => isWeekdayValid(rule.weekday))
 
-    // 批量构造请求体
-    const requestInfoList = await Promise.all(
-      _rules.map(async rule => {
-        const {
-          weekday,
-          area,
-          roomName,
-          beginTime,
-          endTime,
-          title,
-          studentIdList = [],
-        } = rule
+    // 构造请求信息
+    const requestInfoList = await generateReserveRequestInfoList(
+      userInfo,
+      validRules,
+    )
 
-        // 根据学号列表查询对应的 accNo 列表 作为 resvMember 参数
-        // 将预约人放进 studentIdList
-        studentIdList.push(userInfo.pid)
-        const resvMember = await Promise.all(
-          studentIdList.map(async studentId => {
-            const member = await getAccNoByStudentId(studentId)
-            return member.accNo
-          }),
-        )
+    // 批量发起请求
+    return batchSendRequest(requestInfoList)
+  }
 
-        // 处理预约时间格式
-        const now = dayjs()
+  /**
+   * @description 批量发送预约请求
+   * @param requestInfoList 请求信息列表
+   */
+  function batchSendRequest(requestInfoList: ReserveRequestInfo[]) {
+    return Promise.allSettled(
+      requestInfoList.map(async info => {
+        const { area, roomName, time, weekday, studentIdList, title } =
+          info.meta
 
-        // 获取 delta 天之后的 dayjs 对象
-        const delta = weekdayDelta(weekday)
-        const reserveDayjs = now.add(delta, 'day')
-        const formattedDate = reserveDayjs.format('YYYY-MM-DD')
-        const resvBeginTime = `${formattedDate} ${beginTime}`
-        const resvEndTime = `${formattedDate} ${endTime}`
+        const logInfo = [
+          `地点: ${area} -- ${roomName}`,
+          `时间: ${weekday} -- ${time}`,
+          `预约人: ${studentIdList.join(', ')}`,
+          `主题: ${title}`,
+        ]
 
-        // 根据房间名查询对应的 devId
-        const roomDevId = await getRoomDevIdByName(area, roomName, reserveDayjs)
+        try {
+          await request.post<null>(API_RESERVE, info.body)
+          return await Promise.resolve(logInfo.join('|'))
+        } catch (reason) {
+          logInfo.push(`失败原因: ${(reason as any)?.message ?? reason}`)
+          return await Promise.reject(new Error(logInfo.join('|')))
+        }
+      }),
+    )
+  }
 
-        // 构造预约请求体
-        const reserveRequestBody: ReserveRequestBody = {
+  /**
+   * @description 生成请求信息 -- 包括预约请求体和请求元数据信息
+   * @param userInfo 用户信息
+   * @param rules 预约规则
+   */
+  async function generateReserveRequestInfoList(
+    userInfo: UserInfo,
+    rules: ReserveRule[],
+  ) {
+    const generateInfoByRule = async (
+      rule: ReserveRule,
+    ): Promise<ReserveRequestInfo> => {
+      const {
+        weekday,
+        area,
+        beginTime,
+        endTime,
+        roomName,
+        studentIdList,
+        title,
+      } = rule
+      const resvMember = await Promise.all(
+        studentIdList!.map(async studentId => {
+          const member = await getAccNoByStudentId(studentId)
+          return member.accNo
+        }),
+      )
+
+      // 处理预约时间格式
+      const now = dayjs()
+
+      // 获取 delta 天之后的 dayjs 对象
+      const delta = weekdayDelta(weekday)
+      const reserveDayjs = now.add(delta, 'day')
+      const formattedDate = reserveDayjs.format('YYYY-MM-DD')
+      const resvBeginTime = `${formattedDate} ${beginTime}:00`
+      const resvEndTime = `${formattedDate} ${endTime}:00`
+
+      // 根据房间名查询对应的 devId
+      const roomDevId = await getRoomDevIdByName(area, roomName, reserveDayjs)
+
+      return {
+        body: {
           sysKind: 1,
           appAccNo: userInfo.accNo,
           memberKind: 1,
           // resvBeginTime: '2022-10-31 15:20:00',
           resvBeginTime,
           resvEndTime,
-          testName: title ?? '学习',
+          testName: title!,
           resvKind: 2,
           resvProperty: 0,
           appUrl: '',
@@ -76,44 +119,58 @@ function createApi(icCookie: Protocol.Network.Cookie) {
           memo: '',
           captcha: '',
           addServices: [],
-        }
+        },
+        meta: {
+          area,
+          roomName,
+          time: `${resvBeginTime} ~ ${resvEndTime}`,
+          title,
+          weekday,
+          studentIdList: studentIdList!,
+        },
+      }
+    }
 
-        return {
-          body: reserveRequestBody,
-          meta: {
-            area,
-            roomName,
-            time: `${resvBeginTime} ~ ${resvEndTime}`,
-            title,
-            weekday,
-            studentIdList,
-          },
+    const requestInfoList: ReserveRequestInfo[] = []
+    await Promise.all(
+      rules.map(async rule => {
+        const { multiRules = [] } = rule
+
+        // 根据学号列表查询对应的 accNo 列表 作为 resvMember 参数
+        // 将预约人放进 studentIdList
+        rule.title = rule.title ?? '学习'
+        rule.studentIdList = rule.studentIdList ?? []
+        rule.studentIdList.push(userInfo.pid)
+
+        if (multiRules.length) {
+          // multiRules 优先
+          await Promise.all(
+            multiRules.map(async childRule => {
+              // 当必要参数未配置时让其继承自父 rule
+              const completeRule: ReserveRule = Object.assign(rule, childRule)
+
+              // 必要参数缺失时该规则无效 --> 跳过
+              if (
+                !completeRule.weekday ||
+                !completeRule.area ||
+                !completeRule.beginTime ||
+                !completeRule.endTime ||
+                !completeRule.roomName
+              ) {
+                return
+              }
+
+              requestInfoList.push(await generateInfoByRule(completeRule))
+            }),
+          )
+        } else {
+          // 正常处理
+          requestInfoList.push(await generateInfoByRule(rule))
         }
       }),
     )
 
-    const res = await Promise.allSettled(
-      requestInfoList.map(info => {
-        return request
-          .post<null>(API_RESERVE, info.body)
-          .then(() => {
-            const { area, roomName, time, weekday, studentIdList, title } =
-              info.meta
-
-            const logInfo = [
-              `地点: ${area} -- ${roomName}`,
-              `时间: ${weekday} -- ${time}`,
-              `预约人: ${studentIdList.join(', ')}`,
-              `主题: ${title}`,
-            ]
-
-            return Promise.resolve(logInfo)
-          })
-          .catch(reason => Promise.reject(reason?.message ?? reason))
-      }),
-    )
-
-    return res
+    return requestInfoList
   }
 
   /**

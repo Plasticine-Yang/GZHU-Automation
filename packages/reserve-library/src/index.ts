@@ -10,39 +10,66 @@ import { createApi } from './api'
 
 const logger = createLogger('广州大学图书馆预约')
 
-const { GZHU_USERNAME, GZHU_PASSWORD, NODE_ENV } = process.env
+interface RunConfig {
+  rules?: ReserveRule[]
+  gzhuUsername?: string
+  gzhuPassword?: string
+  /** @description 是否从环境变量中读取配置 */
+  useEnv?: boolean
+}
+async function run({
+  gzhuUsername = '',
+  gzhuPassword = '',
+  useEnv = false,
+  rules = [],
+}: RunConfig = {}) {
+  if (useEnv) {
+    const { GZHU_USERNAME, GZHU_PASSWORD, RESERVE_RULES } = process.env
+    gzhuUsername = GZHU_USERNAME ?? gzhuUsername
+    gzhuPassword = GZHU_PASSWORD ?? gzhuPassword
+    rules = RESERVE_RULES ? JSON.parse(RESERVE_RULES) : rules
+  }
 
-async function run() {
-  const username = GZHU_USERNAME ?? ''
-  const password = GZHU_PASSWORD ?? ''
-
-  if (username === '' || password === '') {
-    logger.error('环境变量缺失', '环境变量中没有配置数字广大用户名和密码')
+  if (gzhuUsername === '' || gzhuPassword === '') {
+    logger.error(
+      '用户名或密码缺失',
+      `gzhuUsername: ${gzhuUsername} | gzhuPassword: ${gzhuPassword}`,
+    )
   } else {
-    const rules: ReserveRule[] = [
-      {
-        area: 'firstFloor',
-        weekday: 'tuesday',
-        roomName: '学习室E21',
-        beginTime: '15:20:00',
-        endTime: '18:00:00',
-      },
-    ]
-    reserveLibrary({ username, password, rules })
+    reserveLibrary({
+      gzhuUsername,
+      gzhuPassword,
+      rules,
+    })
   }
 }
 
 /**
  * @description 图书馆预约
  */
-async function reserveLibrary({ username, password, rules }: ReserveConfig) {
+async function reserveLibrary({
+  gzhuUsername,
+  gzhuPassword,
+  rules,
+}: ReserveConfig) {
+  if (rules.length === 0) {
+    logger.error(
+      '未设置预约规则',
+      '请在入口函数中传入预约规则或在环境变量中配置预约规则',
+    )
+    process.exit(1)
+  }
+
   const { browser, page } = await createPuppeteer()
 
   // 登录数字广大
   try {
-    await gzhuLogin(page, username, password)
+    console.log('开始登录数字广大...')
+    await gzhuLogin(page, gzhuUsername, gzhuPassword)
+    console.log('数字广大登录成功，开始获取 ic-cookie...')
   } catch (error) {
     await logger.error('数字广大登录失败', error)
+    await browser.close()
     process.exit(1)
   }
 
@@ -66,8 +93,11 @@ async function reserveLibrary({ username, password, rules }: ReserveConfig) {
           break
       }
     })
-  } catch (error) {
-    await logger.error('未知错误', error)
+  } catch (error: any) {
+    const content = `message: ${error?.message ?? 'no message'}\nstack info: ${
+      error?.stack ?? 'no stack info'
+    }`
+    await logger.error('未知错误', content)
   } finally {
     await browser.close()
   }
@@ -81,8 +111,6 @@ async function loadIcCookie(page: Page) {
   let icCookie: Protocol.Network.Cookie | undefined
 
   try {
-    console.log('登录成功，尝试访问图书馆预约页面获取 ic-cookie...')
-
     await page.goto('http://libbooking.gzhu.edu.cn/#/ic/home')
 
     // 没有任何请求发出时才算加载完成
@@ -105,6 +133,38 @@ async function loadIcCookie(page: Page) {
   return icCookie
 }
 
-NODE_ENV === 'development' && run()
+if (process.env.NODE_ENV === 'development') {
+  const rules: Partial<ReserveRule>[] = (
+    [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ] as Weekday[]
+  ).map(weekday => ({
+    weekday,
+    area: 'firstFloor',
+    roomName: '学习室E21',
+    multiRules: [
+      {
+        beginTime: '9:30',
+        endTime: '12:00',
+      },
+      {
+        beginTime: '14:30',
+        endTime: '18:30',
+      },
+      {
+        beginTime: '19:30',
+        endTime: '21:00',
+      },
+    ],
+  }))
+
+  run({ useEnv: true, rules: rules as ReserveRule[] })
+}
 
 export { run }

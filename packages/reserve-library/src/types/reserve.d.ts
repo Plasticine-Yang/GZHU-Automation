@@ -1,6 +1,6 @@
 interface ReserveConfig {
-  username: string
-  password: string
+  gzhuUsername: string
+  gzhuPassword: string
   rules: ReserveRule[]
 }
 
@@ -40,8 +40,8 @@ type RoomName =
   | '研讨间E18'
   | '研讨间E19'
   | '研讨间E20'
-  | '学习室E21'
   | '研讨间E22'
+  | '学习室E21'
   | '学习室E23'
   | '学习室E24'
   | '学习室E25'
@@ -74,4 +74,19 @@ interface ReserveRule {
 
   /** @description 除了预约发起人之外的其他预约人 */
   studentIdList?: string[]
+
+  /** @description 一天内要预约多次时在该字段进行配置 */
+  multiRules?: Partial<Omit<ReserveRule, 'weekday' | 'multiRules'>>[]
+}
+
+interface ReserveRequestInfo {
+  body: ReserveRequestBody
+  meta: {
+    area: ReserveArea | undefined
+    roomName: RoomName | undefined
+    time: string
+    title: string | undefined
+    weekday: Weekday
+    studentIdList: string[]
+  }
 }

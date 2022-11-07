@@ -17,7 +17,12 @@ const baseLog = async (
   logger: LoggerFn,
 ) => {
   logger(`${title}: ${content}`)
-  emailer && (await emailer.sendEmail(EMAIL_USER!, subject, title, content))
+
+  try {
+    emailer && (await emailer.sendEmail(EMAIL_USER!, subject, title, content))
+  } catch (error) {
+    console.error(`邮件发送失败: ${error}`)
+  }
 }
 
 const createLogger = (subject: string) => {
