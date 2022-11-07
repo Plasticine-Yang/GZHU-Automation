@@ -1,4 +1,4 @@
-# @GZHU-Automation/reserve-library
+# @gzhu-automation/reserve-library
 
 可用于自动化预约广州大学图书馆一楼自习室和五楼会议室
 
