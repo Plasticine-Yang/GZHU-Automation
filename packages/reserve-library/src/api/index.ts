@@ -36,10 +36,11 @@ function createApi(icCookie: Protocol.Network.Cookie) {
   /**
    * @description 批量发送预约请求
    * @param requestInfoList 请求信息列表
+   * @param maxConcurrency 最大并发量
    */
   function batchSendRequest(requestInfoList: ReserveRequestInfo[]) {
-    return Promise.allSettled(
-      requestInfoList.map(async info => {
+    const promises = requestInfoList.map(info => {
+      const sendRequest = async (): Promise<string> => {
         const { area, roomName, time, weekday, studentIdList, title } =
           info.meta
 
@@ -54,11 +55,20 @@ function createApi(icCookie: Protocol.Network.Cookie) {
           await request.post<null>(API_RESERVE, info.body)
           return await Promise.resolve(logInfo.join('|'))
         } catch (reason) {
-          logInfo.push(`失败原因: ${(reason as any)?.message ?? reason}`)
-          return await Promise.reject(new Error(logInfo.join('|')))
+          if (String(reason).includes('当前设备正在被预约，请稍后重试')) {
+            // 重新请求
+            return await Promise.resolve().then(sendRequest)
+          } else {
+            logInfo.push(`失败原因: ${(reason as any)?.message ?? reason}`)
+            return await Promise.reject(new Error(logInfo.join('|')))
+          }
         }
-      }),
-    )
+      }
+
+      return Promise.resolve().then(sendRequest)
+    })
+
+    return Promise.allSettled(promises)
   }
 
   /**
