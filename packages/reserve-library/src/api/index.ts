@@ -16,15 +16,20 @@ function createApi(icCookie: Protocol.Network.Cookie) {
 
   /**
    * @description 预约
-   * @param rules 预约规则
-   * @param waitUntil 等到指定时间开始提交预约请求 -- 格式 21:36:03
+   * @param config ResreveConfig 预约配置
    */
-  async function reserve(rules: ReserveRule[], waitUntil?: string) {
+  async function reserve(config: ReserveConfig) {
+    const { rules, waitUntil, filterWeekday } = config
+
     // 获取预约人信息
     const userInfo = await loadUserInfo()
 
     /** @description 只能预约今天以及未来 3 天的房间 */
-    const isWeekdayValid = (weekday: Weekday) => weekdayDelta(weekday) <= 3
+    const isWeekdayValid = (weekday: Weekday) => {
+      const delta = weekdayDelta(weekday)
+
+      return filterWeekday ? filterWeekday(delta) : delta <= 3
+    }
 
     // 只对有效的 rule 发起请求
     const validRules = rules.filter(rule => isWeekdayValid(rule.weekday))

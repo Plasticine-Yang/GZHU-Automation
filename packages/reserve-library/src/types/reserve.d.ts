@@ -1,8 +1,21 @@
+/**
+ * @description 预约配置
+ */
 interface ReserveConfig {
   gzhuUsername: string
   gzhuPassword: string
   rules: ReserveRule[]
+
+  /** @description 等到指定时间开始提交预约请求 -- 格式 21:36:03 */
   waitUntil?: string
+
+  /**
+   * @description 筛选 weekday rule -- 用于过滤预约规则，不传入该配置项时默认预约今天以及未来三天
+   * @param delta 规则中的 weekday 和今天相差多少天，比如今天是周一，预约规则是周三，那么 delta === 2
+   * @example 预约今天以及未来三天 -- (delta) => delta <= 3
+   * @example 只预约未来第三天 -- (delta) => delta === 3
+   */
+  filterWeekday?: (delta: number) => boolean
 }
 
 type Weekday =

@@ -10,21 +10,14 @@ import { createApi } from './api'
 
 const logger = createLogger('广州大学图书馆预约')
 
-interface RunConfig {
-  rules?: ReserveRule[]
-  gzhuUsername?: string
-  gzhuPassword?: string
+type RunConfig = Partial<ReserveConfig> & {
   /** @description 是否从环境变量中读取配置 */
   useEnv?: boolean
-  waitUntil?: string
 }
-async function run({
-  gzhuUsername = '',
-  gzhuPassword = '',
-  useEnv = false,
-  rules = [],
-  waitUntil,
-}: RunConfig = {}) {
+async function run(config: RunConfig = {}) {
+  const { useEnv, filterWeekday } = config
+  let { gzhuUsername = '', gzhuPassword = '', rules = [], waitUntil } = config
+
   if (useEnv) {
     const { GZHU_USERNAME, GZHU_PASSWORD, RESERVE_RULES, RESERVE_START_TIME } =
       process.env
@@ -40,24 +33,23 @@ async function run({
       `gzhuUsername: ${gzhuUsername} | gzhuPassword: ${gzhuPassword}`,
     )
   } else {
-    reserveLibrary({
+    const reserveConfig: ReserveConfig = {
       gzhuUsername,
       gzhuPassword,
       rules,
       waitUntil,
-    })
+      filterWeekday,
+    }
+    reserveLibrary(reserveConfig)
   }
 }
 
 /**
  * @description 图书馆预约
  */
-async function reserveLibrary({
-  gzhuUsername,
-  gzhuPassword,
-  rules,
-  waitUntil,
-}: ReserveConfig) {
+async function reserveLibrary(config: ReserveConfig) {
+  const { gzhuUsername, gzhuPassword, rules } = config
+
   if (rules.length === 0) {
     logger.error(
       '未设置预约规则',
@@ -86,7 +78,7 @@ async function reserveLibrary({
     console.log(`成功获取 ic-cookie: ${icCookie.value}`)
 
     const api = createApi(icCookie)
-    const res = await api.reserve(rules, waitUntil)
+    const res = await api.reserve(config)
 
     res.forEach(item => {
       switch (item.status) {
@@ -170,7 +162,12 @@ if (process.env.NODE_ENV === 'development') {
     ],
   }))
 
-  run({ useEnv: true, rules: rules as ReserveRule[], waitUntil: '6:30:00' })
+  run({
+    useEnv: true,
+    rules: rules as ReserveRule[],
+    // 只预约未来第三天
+    filterWeekday: delta => delta === 3,
+  })
 }
 
 export { run }
