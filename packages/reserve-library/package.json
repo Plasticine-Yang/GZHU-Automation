@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/reserve-library",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "广州大学图书馆预约",
   "type": "module",
   "main": "dist/reserve-library.cjs.js",
