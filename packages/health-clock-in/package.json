@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/health-clock-in",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "自动健康打卡",
   "type": "module",
   "main": "dist/health-clock-in.cjs.js",
