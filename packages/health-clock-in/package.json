@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/health-clock-in",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "自动健康打卡",
   "type": "module",
   "main": "dist/health-clock-in.cjs.js",
@@ -31,7 +31,7 @@
   "author": "Plasticine",
   "license": "MIT",
   "dependencies": {
-    "@gzhu-automation/shared": "workspace:^1.0.0",
+    "@gzhu-automation/shared": "workspace:*",
     "puppeteer": "^19.2.0"
   }
 }

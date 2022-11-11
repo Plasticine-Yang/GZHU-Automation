@@ -1,6 +1,6 @@
 {
   "name": "@gzhu-automation/reserve-library",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "广州大学图书馆预约",
   "type": "module",
   "main": "dist/reserve-library.cjs.js",
@@ -34,7 +34,7 @@
   "author": "Plasticine",
   "license": "MIT",
   "dependencies": {
-    "@gzhu-automation/shared": "workspace:^1.0.0",
+    "@gzhu-automation/shared": "workspace:*",
     "axios": "^1.1.3",
     "dayjs": "^1.11.6",
     "puppeteer": "^19.2.0"
